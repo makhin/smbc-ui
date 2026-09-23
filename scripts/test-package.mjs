@@ -53,6 +53,25 @@ try {
     JSON.stringify({ type: 'module', private: true, dependencies }),
   );
   run(['install', '--no-audit', '--no-fund'], temp);
+  writeFileSync(join(temp, 'css-import.ts'), "import '@smbc/ui/styles.css';\n");
+  writeFileSync(
+    join(temp, 'tsconfig-css.json'),
+    JSON.stringify({
+      compilerOptions: {
+        module: 'ESNext',
+        moduleResolution: 'Bundler',
+        noEmit: true,
+        noUncheckedSideEffectImports: true,
+        types: [],
+      },
+      files: ['css-import.ts'],
+    }),
+  );
+  execFileSync(
+    'node',
+    [join(temp, 'node_modules/typescript/bin/tsc'), '-p', 'tsconfig-css.json'],
+    { cwd: temp, stdio: 'inherit' },
+  );
   copyFileSync('tests/consumer.tsx', join(temp, 'main.tsx'));
   copyFileSync('tests/types.tsx', join(temp, 'types.tsx'));
   writeFileSync(

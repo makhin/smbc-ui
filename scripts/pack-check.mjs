@@ -16,7 +16,7 @@ assert.equal(manifest.dependencies, undefined);
 assert.deepEqual(manifest.sideEffects, ['**/*.css']);
 for (const file of files)
   assert(
-    /^(package\.json|README\.md|dist\/(?:[\w-]+\/)*[\w-]+\.(?:js|d\.ts|css))$/.test(
+    /^(package\.json|README\.md|dist\/(?:[\w-]+\/)*[\w-]+\.(?:js|d\.ts|css|css\.d\.ts))$/.test(
       file,
     ),
     `Unexpected file: ${file}`,

@@ -1,7 +1,6 @@
 # @smbc/ui
 
-Reusable SMBC React components, version **0.1.0**. `makhin/smbc-style` is the
-Golden Source and integration reference for `@smbc/ui`. Reflect public behavior
+Reusable SMBC React components, version **0.1.0**. Integration reference for `@smbc/ui`. Reflect public behavior
 and visual changes in that application in the same change/release cycle.
 
 ## Installation

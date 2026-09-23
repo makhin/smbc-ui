@@ -19,7 +19,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css",
+    "./styles.css": {
+      "types": "./dist/styles.css.d.ts",
+      "default": "./dist/styles.css"
+    },
     "./data-grid": {
       "types": "./dist/data-grid/index.d.ts",
       "import": "./dist/data-grid/index.js"
