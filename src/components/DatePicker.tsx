@@ -1,23 +1,20 @@
 import DxControl, {
   type IDateBoxOptions as DxProps,
 } from 'devextreme-react/date-box';
-import type { ReactNode } from 'react';
-import { useControlAccessibility, type ControlAccessibility } from './Field.js';
-export type DatePickerProps = ControlAccessibility & {
-  value?: Date | string | number | null;
-  defaultValue?: Date | string | number | null;
-  onChange?: (value: Date | string | number | null) => void;
-  disabled?: boolean;
-  readOnly?: boolean;
-  placeholder?: string;
-  children?: ReactNode;
-
+import { useControlAccessibility } from './Field.js';
+import type {
+  InputEditorProps,
+  EditorDevExtremeProps,
+} from './editor-types.js';
+export type DatePickerProps = InputEditorProps<
+  Date | string | number | null
+> & {
   displayFormat?: DxProps['displayFormat'];
   min?: DxProps['min'];
   max?: DxProps['max'];
-  devExtremeProps?: Omit<
+  devExtremeProps?: EditorDevExtremeProps<
     DxProps,
-    'value' | 'defaultValue' | 'onValueChanged' | 'children'
+    'placeholder' | 'type' | 'displayFormat' | 'min' | 'max'
   >;
 };
 export function DatePicker(props: DatePickerProps) {
@@ -27,10 +24,6 @@ export function DatePicker(props: DatePickerProps) {
     onChange,
     children,
     devExtremeProps,
-    id,
-    ariaLabel,
-    required,
-    error,
     disabled,
     readOnly,
     placeholder,
@@ -39,7 +32,7 @@ export function DatePicker(props: DatePickerProps) {
     max,
   } = props;
   const accessibility = useControlAccessibility(
-    { id, ariaLabel, required, error, externalValidation: 'error' in props },
+    props,
     devExtremeProps?.inputAttr,
   );
   return (

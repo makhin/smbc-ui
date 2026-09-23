@@ -14,7 +14,14 @@ export type ButtonProps = Label & {
   width?: number | string;
   devExtremeProps?: Omit<
     DxProps,
-    'text' | 'children' | 'onClick' | 'disabled' | 'icon' | 'useSubmitBehavior'
+    | 'text'
+    | 'children'
+    | 'onClick'
+    | 'disabled'
+    | 'icon'
+    | 'useSubmitBehavior'
+    | 'width'
+    | 'stylingMode'
   >;
 };
 export function Button({

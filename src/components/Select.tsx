@@ -1,27 +1,27 @@
 import DxControl, {
   type ISelectBoxOptions as DxProps,
 } from 'devextreme-react/select-box';
-import type { ReactNode } from 'react';
-import { useControlAccessibility, type ControlAccessibility } from './Field.js';
-export type SelectProps<T = string, TOption = T> = ControlAccessibility & {
-  value?: T | null;
-  defaultValue?: T | null;
-  onChange?: (value: T | null) => void;
-  disabled?: boolean;
-  readOnly?: boolean;
-  placeholder?: string;
-  children?: ReactNode;
-  options: readonly TOption[];
-  optionLabel?: string | ((item: TOption) => string);
-  optionValue?: string;
-  searchable?: boolean;
-  clearable?: boolean;
+import { useControlAccessibility } from './Field.js';
+import type {
+  InputEditorProps,
+  EditorDevExtremeProps,
+  OptionProps,
+} from './editor-types.js';
+export type SelectProps<T = string, TOption = T> = InputEditorProps<T | null> &
+  OptionProps<TOption> & {
+    searchable?: boolean;
+    clearable?: boolean;
 
-  devExtremeProps?: Omit<
-    DxProps,
-    'value' | 'defaultValue' | 'onValueChanged' | 'children'
-  >;
-};
+    devExtremeProps?: EditorDevExtremeProps<
+      DxProps,
+      | 'placeholder'
+      | 'items'
+      | 'displayExpr'
+      | 'valueExpr'
+      | 'searchEnabled'
+      | 'showClearButton'
+    >;
+  };
 export function Select<T = string, TOption = T>(
   props: SelectProps<T, TOption>,
 ) {
@@ -31,10 +31,6 @@ export function Select<T = string, TOption = T>(
     onChange,
     children,
     devExtremeProps,
-    id,
-    ariaLabel,
-    required,
-    error,
     disabled,
     readOnly,
     placeholder,
@@ -45,7 +41,7 @@ export function Select<T = string, TOption = T>(
     clearable,
   } = props;
   const accessibility = useControlAccessibility(
-    { id, ariaLabel, required, error, externalValidation: 'error' in props },
+    props,
     devExtremeProps?.inputAttr,
   );
   return (

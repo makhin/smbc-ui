@@ -4,7 +4,7 @@ import DxLoadIndicator, {
 export type LoadingIndicatorProps = {
   size?: number;
   ariaLabel?: string;
-  devExtremeProps?: DxProps;
+  devExtremeProps?: Omit<DxProps, 'width' | 'height'>;
 };
 export function LoadingIndicator({
   size = 24,

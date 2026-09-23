@@ -1,21 +1,13 @@
 import DxControl, {
   type ITextBoxOptions as DxProps,
 } from 'devextreme-react/text-box';
-import type { ReactNode } from 'react';
-import { useControlAccessibility, type ControlAccessibility } from './Field.js';
-export type TextInputProps = ControlAccessibility & {
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
-  disabled?: boolean;
-  readOnly?: boolean;
-  placeholder?: string;
-  children?: ReactNode;
-
-  devExtremeProps?: Omit<
-    DxProps,
-    'value' | 'defaultValue' | 'onValueChanged' | 'children'
-  >;
+import { useControlAccessibility } from './Field.js';
+import type {
+  InputEditorProps,
+  EditorDevExtremeProps,
+} from './editor-types.js';
+export type TextInputProps = InputEditorProps<string> & {
+  devExtremeProps?: EditorDevExtremeProps<DxProps, 'placeholder'>;
 };
 export function TextInput(props: TextInputProps) {
   const {
@@ -24,16 +16,12 @@ export function TextInput(props: TextInputProps) {
     onChange,
     children,
     devExtremeProps,
-    id,
-    ariaLabel,
-    required,
-    error,
     disabled,
     readOnly,
     placeholder,
   } = props;
   const accessibility = useControlAccessibility(
-    { id, ariaLabel, required, error, externalValidation: 'error' in props },
+    props,
     devExtremeProps?.inputAttr,
   );
   return (

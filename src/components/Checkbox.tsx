@@ -1,21 +1,12 @@
 import DxControl, {
   type ICheckBoxOptions as DxProps,
 } from 'devextreme-react/check-box';
-import type { ReactNode } from 'react';
-import { useControlAccessibility, type ControlAccessibility } from './Field.js';
-export type CheckboxProps = ControlAccessibility & {
-  value?: boolean | null;
-  defaultValue?: boolean | null;
-  onChange?: (value: boolean | null) => void;
-  disabled?: boolean;
-  readOnly?: boolean;
-  children?: ReactNode;
+import { useControlAccessibility } from './Field.js';
+import type { EditorProps, EditorDevExtremeProps } from './editor-types.js';
+export type CheckboxProps = EditorProps<boolean | null> & {
   label?: string;
 
-  devExtremeProps?: Omit<
-    DxProps,
-    'value' | 'defaultValue' | 'onValueChanged' | 'children'
-  >;
+  devExtremeProps?: EditorDevExtremeProps<DxProps, 'text'>;
 };
 export function Checkbox(props: CheckboxProps) {
   const {
@@ -24,16 +15,12 @@ export function Checkbox(props: CheckboxProps) {
     onChange,
     children,
     devExtremeProps,
-    id,
-    ariaLabel,
-    required,
-    error,
     disabled,
     readOnly,
     label,
   } = props;
   const accessibility = useControlAccessibility(
-    { id, ariaLabel, required, error, externalValidation: 'error' in props },
+    props,
     devExtremeProps?.elementAttr,
   );
   return (

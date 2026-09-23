@@ -130,16 +130,14 @@ export type ControlAccessibility = {
   error?: string;
 };
 export function useControlAccessibility(
-  props: ControlAccessibility & { externalValidation?: boolean },
+  props: ControlAccessibility,
   original?: Record<string, unknown>,
 ) {
   const field = useContext(FieldContext);
   const required = props.required ?? field?.required;
   const error = props.error ?? field?.error;
-  const externalValidation =
-    props.externalValidation || field?.externalValidation;
+  const externalValidation = 'error' in props || field?.externalValidation;
   return {
-    error,
     validationProps: externalValidation
       ? {
           isValid: !error,

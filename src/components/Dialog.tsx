@@ -10,7 +10,13 @@ export type DialogProps = {
   showCloseButton?: boolean;
   devExtremeProps?: Omit<
     DxProps,
-    'visible' | 'title' | 'children' | 'onHiding'
+    | 'visible'
+    | 'title'
+    | 'children'
+    | 'onHiding'
+    | 'width'
+    | 'showCloseButton'
+    | 'hideOnOutsideClick'
   >;
 };
 export function Dialog({

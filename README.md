@@ -135,6 +135,50 @@ container. Only pass ariaLabel when it must announce itself independently.
 </Card>
 ```
 
+## Typed vendor options and migration
+
+`devExtremeProps` is for vendor options that the wrapper does not own, plus
+attributes and callbacks that it explicitly merges. Wrapper-owned options use
+the top-level semantic props. The types now reject the following previously
+accepted but overwritten options; JavaScript runtime precedence is unchanged.
+This is a **TypeScript compatibility change**, including during local 0.1.0
+development. Consumers using these object-literal options must migrate before
+adopting this build; a published release must document the type change.
+
+| Component | Move out of `devExtremeProps` | Top-level replacement |
+|---|---|---|
+| All eight editors | `disabled`, `readOnly` | Same names |
+| TextInput, TextArea, NumberInput, DatePicker, Select, MultiSelect | `placeholder` | `placeholder` |
+| TextArea | `height` | `height` |
+| NumberInput | `format`, `min`, `max`, `step`, `showSpinButtons` | Same names |
+| DatePicker | `displayFormat`, `min`, `max` | Same names |
+| DatePicker | `type` | Date-only component; no override |
+| Select, MultiSelect | `items`, `displayExpr`, `valueExpr` | `options`, `optionLabel`, `optionValue` |
+| Select, MultiSelect | `searchEnabled`, `showClearButton` | `searchable`, `clearable` |
+| MultiSelect | `applyValueMode`, `showSelectionControls` | `applyMode`, `selectionControls` |
+| Checkbox | `text` | `label` |
+| RadioGroup | `items`, `displayExpr`, `valueExpr`, `layout` | `options`, `optionLabel`, `optionValue`, `orientation` |
+| Button | `width`, `stylingMode` | `width`, `variant` |
+| Dialog, ConfirmDialog | `width`, `showCloseButton`, `hideOnOutsideClick` | `width`, `showCloseButton`, `closeOnOutsideClick` |
+| LoadingIndicator | `width`, `height` | `size` |
+
+For example, replace `devExtremeProps={{ applyValueMode: 'useButtons' }}` with
+`applyMode="buttons"`; vendor `'instantly'` maps to `applyMode="instant"`.
+Replace `hideOnOutsideClick: true` with `closeOnOutsideClick`.
+For Button use secondary for outlined, tertiary for text, and primary/danger
+for the respective contained actions; an omitted variant keeps neutral
+contained styling. The deliberate `devExtremeProps={{ type: 'normal' }}`
+override remains available for a neutral outlined secondary button.
+
+Working extensions remain supported: `inputAttr`/`elementAttr`, `searchTimeout`,
+`valueChangeEvent`, Button `type`/fallback `hint`, Dialog
+`height`/`maxWidth`/`dragEnabled`, Tabs `onItemRendered`, and DataGrid defaults.
+Vendor `isValid`/`validationErrors` remain usable without an external error owner.
+Passing an `error` prop, even `error={undefined}` or `error=""`, selects external
+validation; omitting the prop leaves vendor validation in charge. The same
+presence rule applies to Field. Existing Field/control value precedence is
+unchanged.
+
 ## Dialog and toast
 
 ```tsx
@@ -226,13 +270,11 @@ Ensure the sibling archive exists, then:
 
 ```sh
 npm ci
-npm run typecheck
-npm run build
-npm run pack:check
 # First browser setup only, when Chromium is not already installed:
 npx playwright install chromium
-npm test
-npm pack
+npm run check
+# Only immediately after a successful check, with no intervening source changes:
+npm pack --ignore-scripts
 cd ../smbc-style
 npm install ../smbc-ui/smbc-ui-0.1.0.tgz
 npm run lint
@@ -240,14 +282,24 @@ npm run typecheck
 npm run build
 ```
 
+`npm run check` builds the library once, checks package contents, then runs the
+packed-consumer tests. The build already checks source types. Standalone
+`typecheck`, `build`, `pack:check`, and `test` commands remain available;
+`pack:check` and `test` each build first so they do not require a prepared dist.
+For normal standalone packaging, use `npm pack`, which builds automatically.
+Only use `npm pack --ignore-scripts` immediately after a successful check when
+source files have not changed. Publication and its guard are unchanged.
+
 Build uses TypeScript ESM plus a CSS copy. `dist/` contains a root index,
 components, data-grid and validation entry points, declaration files and
 styles.css. `npm pack` builds automatically. Only dist, README and package
 metadata ship. CSS is marked side-effectful for tree shaking; JS is not.
 
 `npm test` packs the library, installs it and the theme into a temporary Vite
-consumer, typechecks/builds that consumer and runs headless Chromium interaction
-checks. It consumes the tarball, never source aliases or symlinks. The test
+consumer, checks its runtime and compile-only type fixtures, builds the consumer
+and runs headless Chromium interaction checks. The type fixture covers value
+contracts, generic inference, retained vendor extensions and rejected owned
+options; it is never imported into the browser. It consumes the tarball, never source aliases or symlinks. The test
 requires npm access/cache and the Playwright Chromium binary. Temporary
 consumers are removed after success or failure.
 

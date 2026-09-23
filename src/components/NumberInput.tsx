@@ -1,25 +1,20 @@
 import DxControl, {
   type INumberBoxOptions as DxProps,
 } from 'devextreme-react/number-box';
-import type { ReactNode } from 'react';
-import { useControlAccessibility, type ControlAccessibility } from './Field.js';
-export type NumberInputProps = ControlAccessibility & {
-  value?: number | null;
-  defaultValue?: number | null;
-  onChange?: (value: number | null) => void;
-  disabled?: boolean;
-  readOnly?: boolean;
-  placeholder?: string;
-  children?: ReactNode;
-
+import { useControlAccessibility } from './Field.js';
+import type {
+  InputEditorProps,
+  EditorDevExtremeProps,
+} from './editor-types.js';
+export type NumberInputProps = InputEditorProps<number | null> & {
   format?: DxProps['format'];
   min?: DxProps['min'];
   max?: DxProps['max'];
   step?: DxProps['step'];
   showSpinButtons?: DxProps['showSpinButtons'];
-  devExtremeProps?: Omit<
+  devExtremeProps?: EditorDevExtremeProps<
     DxProps,
-    'value' | 'defaultValue' | 'onValueChanged' | 'children'
+    'placeholder' | 'format' | 'min' | 'max' | 'step' | 'showSpinButtons'
   >;
 };
 export function NumberInput(props: NumberInputProps) {
@@ -29,10 +24,6 @@ export function NumberInput(props: NumberInputProps) {
     onChange,
     children,
     devExtremeProps,
-    id,
-    ariaLabel,
-    required,
-    error,
     disabled,
     readOnly,
     placeholder,
@@ -43,7 +34,7 @@ export function NumberInput(props: NumberInputProps) {
     showSpinButtons,
   } = props;
   const accessibility = useControlAccessibility(
-    { id, ariaLabel, required, error, externalValidation: 'error' in props },
+    props,
     devExtremeProps?.inputAttr,
   );
   // DevExtreme emits/accepts null when cleared although its 26.1 declaration excludes it.

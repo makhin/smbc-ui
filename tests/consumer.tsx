@@ -56,7 +56,12 @@ const gridRows = [
   { id: 3, name: 'C' },
 ];
 function App() {
-  const [externalError, setExternalError] = useState('Server error');
+  const [externalError, setExternalError] = useState<string | undefined>(
+    'Server error',
+  );
+  const [directError, setDirectError] = useState<string | undefined>(
+    'Direct error',
+  );
   const [teams, setTeams] = useState(['One']);
   const [value, setValue] = useState('Initial');
   const [selected, setSelected] = useState<string | null>('One');
@@ -95,7 +100,60 @@ function App() {
       >
         <TextInput />
       </Field>
-      <Button onClick={() => setExternalError('')}>Clear error</Button>
+      <Field
+        id="composite-error"
+        label="External checkbox"
+        help="Checkbox help"
+        error={externalError}
+        required
+      >
+        <Checkbox
+          devExtremeProps={{ elementAttr: { 'data-preserved': 'checkbox' } }}
+        />
+      </Field>
+      <TextInput
+        ariaLabel="Direct error input"
+        error={directError}
+        devExtremeProps={{
+          inputAttr: {
+            'data-preserved': 'input',
+          },
+          isValid: false,
+          validationErrors: [{ message: 'Vendor fallback error' }],
+        }}
+      />
+      <Field label="Explicit undefined" error={undefined}>
+        <TextInput
+          devExtremeProps={{
+            isValid: false,
+            validationErrors: [{ message: 'Ignored vendor error' }],
+          }}
+        />
+      </Field>
+      <Button
+        onClick={() => {
+          setExternalError('');
+          setDirectError('');
+        }}
+      >
+        Clear error
+      </Button>
+      <Button
+        onClick={() => {
+          setExternalError('Server error');
+          setDirectError('Direct error');
+        }}
+      >
+        Restore errors
+      </Button>
+      <Button
+        onClick={() => {
+          setExternalError(undefined);
+          setDirectError(undefined);
+        }}
+      >
+        Clear errors to undefined
+      </Button>
       <Field label="Note">
         <TextArea defaultValue="Note" />
       </Field>
@@ -196,7 +254,12 @@ function App() {
       <FilterPanel>Filters</FilterPanel>
       <form onSubmit={(e) => e.preventDefault()}>
         <ValidationGroup>
-          <Field label="Email" required>
+          <Field
+            id="vendor-email"
+            label="Email"
+            required
+            help="Vendor validation help"
+          >
             <TextInput>
               <Validator>
                 <RequiredRule message="Email required" />

@@ -1,25 +1,21 @@
 import DxControl, {
   type IRadioGroupOptions as DxProps,
 } from 'devextreme-react/radio-group';
-import type { ReactNode } from 'react';
-import { useControlAccessibility, type ControlAccessibility } from './Field.js';
-export type RadioGroupProps<T = string, TOption = T> = ControlAccessibility & {
-  value?: T;
-  defaultValue?: T;
-  onChange?: (value: T) => void;
-  disabled?: boolean;
-  readOnly?: boolean;
-  children?: ReactNode;
-  options: readonly TOption[];
-  optionLabel?: string | ((item: TOption) => string);
-  optionValue?: string;
-  orientation?: 'horizontal' | 'vertical';
+import { useControlAccessibility } from './Field.js';
+import type {
+  EditorProps,
+  EditorDevExtremeProps,
+  OptionProps,
+} from './editor-types.js';
+export type RadioGroupProps<T = string, TOption = T> = EditorProps<T> &
+  OptionProps<TOption> & {
+    orientation?: 'horizontal' | 'vertical';
 
-  devExtremeProps?: Omit<
-    DxProps,
-    'value' | 'defaultValue' | 'onValueChanged' | 'children'
-  >;
-};
+    devExtremeProps?: EditorDevExtremeProps<
+      DxProps,
+      'items' | 'displayExpr' | 'valueExpr' | 'layout'
+    >;
+  };
 export function RadioGroup<T = string, TOption = T>(
   props: RadioGroupProps<T, TOption>,
 ) {
@@ -29,10 +25,6 @@ export function RadioGroup<T = string, TOption = T>(
     onChange,
     children,
     devExtremeProps,
-    id,
-    ariaLabel,
-    required,
-    error,
     disabled,
     readOnly,
     options,
@@ -41,7 +33,7 @@ export function RadioGroup<T = string, TOption = T>(
     orientation,
   } = props;
   const accessibility = useControlAccessibility(
-    { id, ariaLabel, required, error, externalValidation: 'error' in props },
+    props,
     devExtremeProps?.elementAttr,
   );
   return (

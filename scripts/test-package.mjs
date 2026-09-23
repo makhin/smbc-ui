@@ -54,6 +54,7 @@ try {
   );
   run(['install', '--no-audit', '--no-fund'], temp);
   copyFileSync('tests/consumer.tsx', join(temp, 'main.tsx'));
+  copyFileSync('tests/types.tsx', join(temp, 'types.tsx'));
   writeFileSync(
     join(temp, 'index.html'),
     '<!DOCTYPE html><html><body class="dx-viewport"><div id="root"></div><script type="module" src="/main.tsx"></script></body></html>',
@@ -131,8 +132,39 @@ try {
   );
   assert(descriptions.includes('Server error'));
   assert(descriptions.includes('Always available help'));
+  const direct = page.getByRole('textbox', {
+    name: 'Direct error input',
+    exact: true,
+  });
+  const composite = page.getByRole('checkbox', {
+    name: 'External checkbox',
+    exact: true,
+  });
+  assert.equal(await direct.getAttribute('aria-invalid'), 'true');
+  assert.equal(await direct.getAttribute('data-preserved'), 'input');
+  assert.equal(await composite.getAttribute('data-preserved'), 'checkbox');
+  assert.equal(await composite.getAttribute('aria-invalid'), 'true');
+  assert.equal(await composite.getAttribute('aria-required'), 'true');
+  assert(
+    (await composite.getAttribute('aria-describedby')).includes(
+      'composite-error-help',
+    ),
+  );
+  assert(
+    (await composite.getAttribute('aria-describedby')).includes(
+      'composite-error-error',
+    ),
+  );
+  assert.notEqual(
+    await page
+      .getByLabel('Explicit undefined', { exact: true })
+      .getAttribute('aria-invalid'),
+    'true',
+  );
   await page.getByRole('button', { name: 'Clear error', exact: true }).click();
-  await page.locator('.smbc-ui-field__error').waitFor({ state: 'detached' });
+  await page.waitForFunction(
+    () => !document.querySelector('.smbc-ui-field__error'),
+  );
   const remainingDescriptions = await invalid.evaluate((element) =>
     (element.getAttribute('aria-describedby') ?? '')
       .split(' ')
@@ -141,6 +173,34 @@ try {
   );
   assert.deepEqual(remainingDescriptions, ['Always available help']);
   assert.notEqual(await invalid.getAttribute('aria-invalid'), 'true');
+  assert.notEqual(await direct.getAttribute('aria-invalid'), 'true');
+  assert.notEqual(await composite.getAttribute('aria-invalid'), 'true');
+  assert.equal(
+    await composite.getAttribute('aria-describedby'),
+    'composite-error-help',
+  );
+  await page
+    .getByRole('button', { name: 'Restore errors', exact: true })
+    .click();
+  await page.waitForFunction(
+    () =>
+      document
+        .getElementById('composite-error')
+        ?.getAttribute('aria-invalid') === 'true',
+  );
+  assert.equal(await direct.getAttribute('aria-invalid'), 'true');
+  await page
+    .getByRole('button', { name: 'Clear errors to undefined', exact: true })
+    .click();
+  await page.waitForFunction(
+    () => !document.querySelector('.smbc-ui-field__error'),
+  );
+  for (const control of [invalid, direct, composite])
+    assert.notEqual(await control.getAttribute('aria-invalid'), 'true');
+  assert.equal(
+    await composite.getAttribute('aria-describedby'),
+    'composite-error-help',
+  );
 
   await page.getByLabel('Amount', { exact: true }).fill('');
   await page.getByLabel('Amount', { exact: true }).press('Tab');
@@ -229,6 +289,16 @@ try {
     .locator('.dx-validationsummary')
     .getByText('Minimum ten', { exact: true })
     .waitFor();
+  const email = page.locator('#vendor-email');
+  assert.equal(await email.getAttribute('aria-invalid'), 'true');
+  const vendorDescriptions = await email.evaluate((element) =>
+    (element.getAttribute('aria-describedby') ?? '')
+      .split(' ')
+      .filter(Boolean)
+      .map((id) => document.getElementById(id)?.textContent),
+  );
+  assert(vendorDescriptions.includes('Vendor validation help'));
+  assert(vendorDescriptions.some((text) => text?.includes('Email required')));
   assert.equal(
     await page
       .locator('.dx-data-row')

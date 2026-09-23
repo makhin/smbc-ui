@@ -35,7 +35,8 @@
     "prepack": "npm run build",
     "pack:check": "npm run build && node scripts/pack-check.mjs",
     "prepublishOnly": "node scripts/check-publish.mjs",
-    "test": "npm run build && node scripts/test-package.mjs"
+    "test": "npm run build && node scripts/test-package.mjs",
+    "check": "npm run build && node scripts/pack-check.mjs && node scripts/test-package.mjs"
   },
   "peerDependencies": {
     "@smbc/devextreme-theme": "^0.1.0",

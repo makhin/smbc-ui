@@ -9,7 +9,7 @@ const [pack] = JSON.parse(
 );
 const files = pack.files.map((f) => f.path);
 assert.equal(manifest.name, '@smbc/ui');
-assert.equal(manifest.version, '0.1.0');
+assert.equal(pack.version, manifest.version);
 assert.equal(manifest.publishConfig.access, 'restricted');
 assert.equal(manifest.publishConfig.registry, undefined);
 assert.equal(manifest.dependencies, undefined);

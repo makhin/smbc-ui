@@ -1,29 +1,31 @@
 import DxControl, {
   type ITagBoxOptions as DxProps,
 } from 'devextreme-react/tag-box';
-import type { ReactNode } from 'react';
-import { useControlAccessibility, type ControlAccessibility } from './Field.js';
-export type MultiSelectProps<T = string, TOption = T> = ControlAccessibility & {
-  value?: T[];
-  defaultValue?: T[];
-  onChange?: (value: T[]) => void;
-  disabled?: boolean;
-  readOnly?: boolean;
-  placeholder?: string;
-  children?: ReactNode;
-  options: readonly TOption[];
-  optionLabel?: string | ((item: TOption) => string);
-  optionValue?: string;
-  searchable?: boolean;
-  clearable?: boolean;
-  applyMode?: 'instant' | 'buttons';
-  selectionControls?: boolean;
+import { useControlAccessibility } from './Field.js';
+import type {
+  InputEditorProps,
+  EditorDevExtremeProps,
+  OptionProps,
+} from './editor-types.js';
+export type MultiSelectProps<T = string, TOption = T> = InputEditorProps<T[]> &
+  OptionProps<TOption> & {
+    searchable?: boolean;
+    clearable?: boolean;
+    applyMode?: 'instant' | 'buttons';
+    selectionControls?: boolean;
 
-  devExtremeProps?: Omit<
-    DxProps,
-    'value' | 'defaultValue' | 'onValueChanged' | 'children'
-  >;
-};
+    devExtremeProps?: EditorDevExtremeProps<
+      DxProps,
+      | 'placeholder'
+      | 'items'
+      | 'displayExpr'
+      | 'valueExpr'
+      | 'searchEnabled'
+      | 'showClearButton'
+      | 'applyValueMode'
+      | 'showSelectionControls'
+    >;
+  };
 export function MultiSelect<T = string, TOption = T>(
   props: MultiSelectProps<T, TOption>,
 ) {
@@ -33,10 +35,6 @@ export function MultiSelect<T = string, TOption = T>(
     onChange,
     children,
     devExtremeProps,
-    id,
-    ariaLabel,
-    required,
-    error,
     disabled,
     readOnly,
     placeholder,
@@ -49,7 +47,7 @@ export function MultiSelect<T = string, TOption = T>(
     selectionControls,
   } = props;
   const accessibility = useControlAccessibility(
-    { id, ariaLabel, required, error, externalValidation: 'error' in props },
+    props,
     devExtremeProps?.inputAttr,
   );
   return (
