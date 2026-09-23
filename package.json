@@ -1,0 +1,59 @@
+{
+  "name": "@smbc/ui",
+  "version": "0.1.0",
+  "description": "Reusable SMBC React components",
+  "type": "module",
+  "license": "UNLICENSED",
+  "private": false,
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./data-grid": {
+      "types": "./dist/data-grid/index.d.ts",
+      "import": "./dist/data-grid/index.js"
+    },
+    "./validation": {
+      "types": "./dist/validation/index.d.ts",
+      "import": "./dist/validation/index.js"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "node scripts/build.mjs",
+    "prepack": "npm run build",
+    "pack:check": "npm run build && node scripts/pack-check.mjs",
+    "prepublishOnly": "node scripts/check-publish.mjs",
+    "test": "npm run build && node scripts/test-package.mjs"
+  },
+  "peerDependencies": {
+    "@smbc/devextreme-theme": "^0.1.0",
+    "devextreme": "~26.1.4",
+    "devextreme-react": "~26.1.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@smbc/devextreme-theme": "file:../devextreme-theme/smbc-devextreme-theme-0.1.0.tgz",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "devextreme": "26.1.4",
+    "devextreme-react": "26.1.4",
+    "playwright": "1.62.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "typescript": "~6.0.2",
+    "vite": "8.2.2"
+  }
+}

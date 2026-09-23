@@ -1,0 +1,272 @@
+.smbc-ui-card {
+  background: var(--color-surface-default);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.smbc-ui-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 48px;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-width-default) solid var(--color-border-default);
+}
+
+.smbc-ui-card__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.smbc-ui-card__body {
+  padding: var(--space-4);
+}
+
+.smbc-ui-card__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border-width-default) solid var(--color-border-default);
+}
+
+.smbc-ui-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 48px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface-default);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+}
+
+.smbc-ui-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.smbc-ui-filter-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface-default);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+}
+
+.smbc-ui-field {
+  min-width: 0;
+}
+
+.smbc-ui-field > .dx-radiogroup {
+  margin-top: calc(-1 * var(--space-1));
+}
+
+.smbc-ui-field--wide {
+  grid-column: span 2;
+}
+
+.smbc-ui-status-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-secondary);
+}
+
+.smbc-ui-status-badge--success {
+  color: var(--color-feedback-success);
+  background: var(--color-feedback-success-subtle);
+}
+
+.smbc-ui-status-badge--warning {
+  color: var(--color-feedback-warning);
+  background: var(--color-feedback-warning-subtle);
+}
+
+.smbc-ui-status-badge--danger {
+  color: var(--color-feedback-danger);
+  background: var(--color-feedback-danger-subtle);
+}
+
+.smbc-ui-status-badge--info {
+  color: var(--color-feedback-info);
+  background: var(--color-feedback-info-subtle);
+}
+
+.smbc-ui-status-badge--brand {
+  color: var(--color-action-primary);
+  background: var(--color-surface-selected);
+}
+
+.smbc-ui-empty-state {
+  display: grid;
+  place-items: center;
+  min-height: 240px;
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-default);
+  border: var(--border-width-default) dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+
+.smbc-ui-kpi {
+  padding: var(--space-4);
+  background: var(--color-surface-default);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+}
+
+.smbc-ui-kpi__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.smbc-ui-kpi__value {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.smbc-ui-kpi__meta {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.smbc-ui-table-shell {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--color-surface-default);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+}
+
+.smbc-ui-callout {
+  padding: var(--space-3) var(--space-4);
+  border-left: var(--border-width-emphasis) solid var(--color-action-primary);
+  background: var(--color-surface-subtle);
+}
+
+.smbc-ui-callout--brand {
+  border-left-color: var(--color-action-accent);
+  background: var(--color-surface-selected);
+}
+
+.smbc-ui-callout--warning {
+  border-left-color: var(--color-feedback-warning);
+  background: var(--color-feedback-warning-faint);
+}
+
+.smbc-ui-callout--danger {
+  border-left-color: var(--color-feedback-danger);
+  background: var(--color-feedback-danger-faint);
+}
+
+.smbc-ui-card .dx-toolbar,
+.smbc-ui-toolbar .dx-toolbar {
+  background: transparent;
+}
+
+.smbc-ui-table-shell .dx-datagrid,
+.smbc-ui-table-shell .dx-treelist {
+  border: 0;
+}
+
+.smbc-ui-table-shell .dx-freespace-row {
+  height: 0 !important;
+}
+
+@media (max-width: 1100px) {
+  .smbc-ui-filter-panel {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .smbc-ui-filter-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .smbc-ui-field--wide {
+    grid-column: auto;
+  }
+
+  .smbc-ui-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .smbc-ui-toolbar__group {
+    flex-wrap: wrap;
+  }
+}
+
+.smbc-ui-label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.smbc-ui-caption {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.smbc-ui-muted {
+  color: var(--color-text-secondary);
+}
+
+.smbc-ui-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+
+.smbc-ui-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: var(--border-width-default) solid var(--color-border-default);
+}
+
+.smbc-ui-empty-state__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-circle);
+  background: var(--color-surface-selected);
+  color: var(--color-action-primary);
+}
+
+.smbc-ui-empty-state__icon .dx-icon {
+  font-size: var(--font-size-xl);
+}
+
+.smbc-ui-overlay-host {
+  position: absolute;
+}
+.smbc-ui-field__error {
+  color: var(--color-feedback-danger);
+  font-size: var(--font-size-xs);
+}
