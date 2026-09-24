@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { runNpm } from './run-npm.mjs';
 import {
   mkdtempSync,
@@ -12,6 +13,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createServer } from 'vite';
 import { chromium } from 'playwright';
+const require = createRequire(import.meta.url);
 const run = (args, cwd) =>
   runNpm(args, {
     cwd,
@@ -42,7 +44,7 @@ try {
     ].map((key) => [
       key,
       JSON.parse(
-        readFileSync(join(root, 'node_modules', key, 'package.json'), 'utf8'),
+        readFileSync(require.resolve(`${key}/package.json`), 'utf8'),
       ).version,
     ]),
   );

@@ -294,6 +294,12 @@ components, data-grid and validation entry points, declaration files and
 styles.css. `npm pack` builds automatically. Only dist, README and package
 metadata ship. CSS is marked side-effectful for tree shaking; JS is not.
 
+Build and package checks resolve development dependencies from the package or
+an ancestor `node_modules`, including hoisted workspace installations. If
+TypeScript cannot be resolved, install development dependencies with
+`npm ci --include=dev` (at the workspace root for an npm workspace), then retry
+`npm run check` in this package.
+
 `npm test` packs the library, installs it and the theme into a temporary Vite
 consumer, checks its runtime and compile-only type fixtures, builds the consumer
 and runs headless Chromium interaction checks. The type fixture covers value
