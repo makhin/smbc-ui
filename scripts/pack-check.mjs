@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { runNpm } from './run-npm.mjs';
 import { readFileSync } from 'node:fs';
 const manifest = JSON.parse(readFileSync('package.json', 'utf8'));
 const [pack] = JSON.parse(
-  execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], {
+  runNpm(['pack', '--dry-run', '--json', '--ignore-scripts'], {
     encoding: 'utf8',
   }),
 );

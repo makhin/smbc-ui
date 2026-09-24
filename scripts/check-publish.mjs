@@ -1,7 +1,7 @@
-import { execFileSync } from 'node:child_process';
+import { runNpm } from './run-npm.mjs';
 
 function config(key) {
-  return execFileSync('npm', ['config', 'get', key], {
+  return runNpm(['config', 'get', key], {
     encoding: 'utf8',
   }).trim();
 }

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { runNpm } from './run-npm.mjs';
 import {
   mkdtempSync,
   readFileSync,
@@ -12,7 +13,7 @@ import { join, resolve } from 'node:path';
 import { createServer } from 'vite';
 import { chromium } from 'playwright';
 const run = (args, cwd) =>
-  execFileSync('npm', args, {
+  runNpm(args, {
     cwd,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
