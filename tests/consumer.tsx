@@ -248,8 +248,10 @@ function App() {
       </Callout>
       <EmptyState title="No results" icon="search" />
       <KpiCard label="Count" value={1} />
-      <Toolbar>
-        <Toolbar.Group>Actions</Toolbar.Group>
+      <Toolbar width={320} devExtremeProps={{ elementAttr: { id: 'consumer-toolbar' } }}>
+        <Toolbar.Item location="before" render={() => <Toolbar.Group>Actions</Toolbar.Group>} />
+        <Toolbar.Item location="after" render={() => <Button onClick={() => setCount(count + 1)}>Toolbar count</Button>} />
+        <Toolbar.Item location="after" locateInMenu="always" menuItemRender={() => <Button onClick={() => setCount(count + 1)}>Toolbar menu action</Button>} />
       </Toolbar>
       <FilterPanel>Filters</FilterPanel>
       <form onSubmit={(e) => e.preventDefault()}>

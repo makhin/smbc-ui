@@ -1,4 +1,5 @@
 export * from './components/Button.js';
+export * from './components/Toolbar.js';
 export * from './components/TextInput.js';
 export * from './components/TextArea.js';
 export * from './components/NumberInput.js';

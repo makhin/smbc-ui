@@ -119,6 +119,13 @@ try {
   await page.goto(server.resolvedUrls.local[0]);
   await page.getByRole('button', { name: 'Count', exact: true }).click();
   assert.equal(await page.locator('#count').textContent(), '1');
+  const toolbar = page.locator('#consumer-toolbar.dx-toolbar');
+  await toolbar.getByText('Actions', { exact: true }).waitFor();
+  await toolbar.getByRole('button', { name: 'Toolbar count', exact: true }).click();
+  assert.equal(await page.locator('#count').textContent(), '2');
+  await toolbar.locator('.dx-dropdownmenu-button').click();
+  await page.getByText('Toolbar menu action', { exact: true }).click();
+  assert.equal(await page.locator('#count').textContent(), '3');
   await page.getByLabel('Reference', { exact: true }).fill('Changed');
   await page.getByLabel('Reference', { exact: true }).press('Tab');
   assert.equal(await page.locator('#value').textContent(), 'Changed');

@@ -1,5 +1,4 @@
 .smbc-ui-card,
-.smbc-ui-toolbar,
 .smbc-ui-filter-panel,
 .smbc-ui-kpi,
 .smbc-ui-table-shell {
@@ -37,15 +36,6 @@
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   border-top: var(--border-width-default) solid var(--color-border-default);
-}
-
-.smbc-ui-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 48px;
-  padding: var(--space-2) var(--space-3);
 }
 
 .smbc-ui-toolbar__group {
@@ -171,8 +161,7 @@
   background: var(--color-feedback-danger-faint);
 }
 
-.smbc-ui-card .dx-toolbar,
-.smbc-ui-toolbar .dx-toolbar {
+.smbc-ui-card .dx-toolbar {
   background: transparent;
 }
 
@@ -198,11 +187,6 @@
 
   .smbc-ui-field--wide {
     grid-column: auto;
-  }
-
-  .smbc-ui-toolbar {
-    align-items: stretch;
-    flex-direction: column;
   }
 
   .smbc-ui-toolbar__group {

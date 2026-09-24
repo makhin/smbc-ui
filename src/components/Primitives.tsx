@@ -11,9 +11,6 @@ export const Card = Object.assign(box('card'), {
   Body: box('card__body'),
   Footer: box('card__footer'),
 });
-export const Toolbar = Object.assign(box('toolbar'), {
-  Group: box('toolbar__group'),
-});
 export const FilterPanel = box('filter-panel');
 export const TableShell = box('table-shell');
 export type StatusBadgeTone =

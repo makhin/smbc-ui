@@ -1,7 +1,8 @@
 # @smbc/ui
 
-Reusable SMBC React components, version **0.1.0**. Integration reference for `@smbc/ui`. Reflect public behavior
-and visual changes in that application in the same change/release cycle.
+Reusable SMBC React components, version **0.1.0**. The `smbc-style` project is
+the integration reference. Reflect public behaviour and visual changes there
+in the same change/release cycle.
 
 ## Installation
 
@@ -25,12 +26,12 @@ explicit release operation, separate from building and packing.
 
 ```ts
 import '@smbc/ui/styles.css';
-// Optional application typography/layout styles go here in the Golden Source.
+// Optional application typography/layout styles go here in the smbc-style reference.
 import '@smbc/devextreme-theme/styles.css';
 // Optional application shell styles follow the theme.
 ```
 
-This order is tested against the Golden Source. Do not also load a stock
+This order is tested against the smbc-style reference. Do not also load a stock
 DevExtreme theme. UI CSS uses semantic theme variables and private `smbc-ui-*`
 classes. It contains no theme import, global document reset or brand assets.
 Use component props and composition rather than targeting private CSS classes.
@@ -39,8 +40,10 @@ Use component props and composition rather than targeting private CSS classes.
 fonts, logo, favicon, generated DevExtreme CSS, overrides and visualization
 palette. Applications still import assets/palette directly from that package.
 Routing, business workflows, navigation, global typography and application
-shells belong to applications. Charts remain an approved direct
-`devextreme-react/chart` import; no chart abstraction is included in v0.1.
+shells belong to applications. No chart abstraction is included in v0.1, and
+`smbc-style` has no chart section. Application controls must use this package;
+there is no direct DevExtreme import exception for charts. Extend the shared
+API before introducing a new vendor control into an application.
 
 ## Basic usage
 
@@ -95,15 +98,39 @@ until the narrow breakpoint.
 | Callout | info/brand/warning/danger tone, optional title, children |
 | EmptyState | icon, title, description, action; optional children |
 | KpiCard | label, value, meta |
-| Toolbar | Toolbar.Group composition |
+| Toolbar | DevExtreme Toolbar; items, Toolbar.Item, disabled, width, devExtremeProps; Toolbar.Group inside item templates |
 | FilterPanel | Responsive four/two/one-column filter layout |
 | TableShell | Shared border/overflow shell for a grid or native table |
 
 Component Props types, ButtonVariant and StatusBadgeTone are exported as well.
 
+Toolbar uses DevExtreme layout and theme styling. Place content in
+`Toolbar.Item` templates; the previous direct `<Toolbar.Group>` children must
+be moved into an item's `render` callback. `Toolbar.Group` remains a flex
+container for related controls. Use separate items when controls should move
+individually into the overflow menu. Use our `Button` in both `render` and
+`menuItemRender`; do not create vendor buttons with `widget="dxButton"` or an
+equivalent `items` configuration. For disabled actions, disable both the item
+and Button. With the current custom templates, clicking an action leaves the
+menu open; clicking outside dismisses it. Automatic dismissal is not part of
+the wrapper API. The change from direct Group children to Item templates is a
+consumer migration, including during local 0.1.0 development.
+
+```tsx
+<Toolbar>
+  <Toolbar.Item location="before" render={() => <Toolbar.Group>Actions</Toolbar.Group>} />
+  <Toolbar.Item
+    location="after"
+    locateInMenu="auto"
+    render={() => <Button onClick={refresh}>Refresh</Button>}
+    menuItemRender={() => <Button onClick={refresh}>Refresh</Button>}
+  />
+</Toolbar>
+```
+
 Button variants map to primary=default/contained, secondary=default/outlined,
 tertiary=normal/text, danger=danger/contained. Omitting variant preserves the
-Golden Source neutral contained button. Text children are strings. Icon-only
+smbc-style reference neutral contained button. Text children are strings. Icon-only
 buttons require `ariaLabel` at compile time and also fail at runtime when it is
 missing. A typed escape hatch can preserve an explicitly neutral outlined
 reference button (`devExtremeProps={{ type: 'normal' }}`).
