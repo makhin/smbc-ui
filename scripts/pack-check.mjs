@@ -28,13 +28,20 @@ for (const entry of Object.values(manifest.exports))
     assert(files.includes(target.slice(2)), `Missing ${target}`);
 const css = readFileSync('dist/styles.css', 'utf8');
 assert(
-  !/@font-face|@import|url\(|#[\da-f]{3,8}\b|--[\w-]+\s*:/.test(css),
-  'UI CSS must consume the theme, not redefine it',
+  !/@font-face|@import|url\(|@theme|@source|@reference|@tailwind/.test(css),
+  'Published CSS must be compiled and asset/theme-import free',
 );
 assert(
   !/(?:^|\n)(?:html|body|h[1-6])\b/.test(css),
   'No global document styles',
 );
+// Tailwind's --tw-* property bookkeeping is expected; canonical tokens are not.
+for (const [, name] of css.matchAll(/(--[\w-]+)\s*:/g)) {
+  assert(name.startsWith('--tw-'), `UI must not redefine design token ${name}`);
+}
+assert(!/box-sizing:border-box;margin:0|button,input,optgroup,select,textarea/.test(css), 'No Preflight');
+assert(css.includes('.ui\\:flex{') && css.includes('.ui\\:text-danger{'), 'Component utilities must be in the archive');
+assert(!/\.(?:bg|text)-(?:green|emerald|red)-/.test(css), 'No palette utilities');
 for (const file of files.filter((f) => f.endsWith('.js')))
   assert(
     readFileSync(file, 'utf8').length < 20000,

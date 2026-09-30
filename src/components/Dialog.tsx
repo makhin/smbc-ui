@@ -37,7 +37,7 @@ export function Dialog({
       {...devExtremeProps}
       elementAttr={{
         ...devExtremeProps?.elementAttr,
-        class: `smbc-ui-overlay-host ${devExtremeProps?.elementAttr?.class ?? ''}`,
+        class: `ui:absolute ${devExtremeProps?.elementAttr?.class ?? ''}`,
       }}
       visible={open}
       title={title}

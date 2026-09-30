@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@smbc/devextreme-theme": "file:../devextreme-theme/smbc-devextreme-theme-0.1.0.tgz",
+    "@tailwindcss/cli": "4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "devextreme": "26.1.4",
@@ -57,6 +58,7 @@
     "playwright": "1.62.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "tailwindcss": "4.3.3",
     "typescript": "~6.0.2",
     "vite": "8.2.2"
   }

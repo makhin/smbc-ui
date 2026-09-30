@@ -25,16 +25,47 @@ explicit release operation, separate from building and packing.
 ## Styles and ownership
 
 ```ts
-import '@smbc/ui/styles.css';
-// Optional application typography/layout styles go here in the smbc-style reference.
 import '@smbc/devextreme-theme/styles.css';
-// Optional application shell styles follow the theme.
+import '@smbc/ui/styles.css';
 ```
 
-This order is tested against the smbc-style reference. Do not also load a stock
-DevExtreme theme. UI CSS uses semantic theme variables and private `smbc-ui-*`
-classes. It contains no theme import, global document reset or brand assets.
-Use component props and composition rather than targeting private CSS classes.
+Both CSS imports are required. Do not also load a stock DevExtreme theme.
+Tailwind **4.3.3** is a build-time implementation detail: `scripts/build.mjs`
+compiles component utilities with the official `@tailwindcss/cli` into the
+published `styles.css`. Consumers need no Tailwind installation, plugin,
+configuration, or scan of `node_modules/@smbc/ui`. The installed-tarball test
+uses a consumer with no Tailwind and verifies both appearance and behaviour.
+No Tailwind Preflight or document typography/reset is included.
+
+Component layout, spacing, typography and semantic decoration live next to JSX
+as `ui:` prefixed utilities. They reference the theme's CSS-first bridge and
+canonical variables, never a library-owned palette. The prefix prevents
+collisions with an application's unprefixed Tailwind utilities. Generated
+`--tw-*` properties are compiler bookkeeping, not SMBC design tokens.
+
+`src/styles/devextreme-overrides.css` centralizes the remaining private vendor
+integration hooks (`Field` radio spacing, Card toolbar background, TableShell
+grid borders/freespace, EmptyState icon sizing). Global corporate DevExtreme corrections remain in the
+theme package. Do not scatter `.dx-*` selectors across React components.
+
+### Composition and className
+
+For HTML-based components, `className` adds layout/presentation to the root.
+It is additive, not a guarantee that conflicting utilities override internal
+styles by their order in the HTML. Use semantic props for supported variants;
+wrap components for layout when necessary. No `tailwind-merge` dependency is
+needed. A Tailwind application can deliberately place its utilities in a layer
+after shared components, as the reference does. Private `smbc-ui-*` hooks and
+`ui:` implementation classes are not public styling APIs.
+
+Use ordinary `div` elements with application utilities for generic flex/grid
+composition. Do not introduce Stack/Row/Grid abstractions merely to hide CSS.
+StatusBadge and Callout use explicit tone maps so all variants are compiled.
+
+Responsive filters use one column below `md` (768px), two up to `xl` (1280px),
+and four at `xl`. `Field wide` spans two columns from `md`. This replaces the
+old 760/1100px thresholds with standard breakpoints and avoids cramped four
+column filters in sidebar applications.
 
 **@smbc/ui does not own the SMBC theme.** `@smbc/devextreme-theme` owns tokens,
 fonts, logo, favicon, generated DevExtreme CSS, overrides and visualization
@@ -292,9 +323,11 @@ same control.
 ## Development and packed integration
 
 The local theme dependency uses `../devextreme-theme/smbc-devextreme-theme-0.1.0.tgz`.
-Ensure the sibling archive exists, then:
+After regenerating the theme, refresh the development archive and its integrity
+(use `--save-dev` to retain the registry peer range), then:
 
 ```sh
+npm install --save-dev ../devextreme-theme/smbc-devextreme-theme-0.1.0.tgz
 npm ci
 # First browser setup only, when Chromium is not already installed:
 npx playwright install chromium
@@ -316,7 +349,7 @@ For normal standalone packaging, use `npm pack`, which builds automatically.
 Only use `npm pack --ignore-scripts` immediately after a successful check when
 source files have not changed. Publication and its guard are unchanged.
 
-Build uses TypeScript ESM plus a CSS copy. `dist/` contains a root index,
+Build uses TypeScript ESM plus the official Tailwind v4 CLI CSS compilation. `dist/` contains a root index,
 components, data-grid and validation entry points, declaration files and
 styles.css. `npm pack` builds automatically. Only dist, README and package
 metadata ship. CSS is marked side-effectful for tree shaking; JS is not.

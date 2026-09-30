@@ -42,8 +42,8 @@ import {
   ValidationGroup,
   ValidationSummary,
 } from '@smbc/ui/validation';
-import '@smbc/ui/styles.css';
 import '@smbc/devextreme-theme/styles.css';
+import '@smbc/ui/styles.css';
 // Stable configuration matches the Golden Source and preserves vendor keyboard focus.
 const tabItems = [{ text: 'First' }, { text: 'Second' }];
 const accordionItems = [
@@ -238,8 +238,11 @@ function App() {
         Loading
         <LoadingIndicator />
       </div>
+      <Toolbar.Group id="isolation-group">Isolated group</Toolbar.Group>
+      <StatusBadge id="isolation-badge" tone="success">Isolated badge</StatusBadge>
+      <Callout id="isolation-callout" tone="danger">Isolated callout</Callout>
       <Card>
-        <Card.Body>
+        <Card.Body id="isolation-card-body">
           <StatusBadge tone="warning">Review</StatusBadge>
         </Card.Body>
       </Card>

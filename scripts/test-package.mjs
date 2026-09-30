@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { runNpm } from './run-npm.mjs';
 import {
+  existsSync,
   mkdtempSync,
   readFileSync,
   writeFileSync,
@@ -56,6 +57,8 @@ try {
     JSON.stringify({ type: 'module', private: true, dependencies }),
   );
   run(['install', '--no-audit', '--no-fund'], temp);
+  assert(!existsSync(join(temp, 'node_modules/tailwindcss')), 'Consumer must run without Tailwind');
+  assert(!existsSync(join(temp, 'node_modules/@tailwindcss')), 'Consumer must run without Tailwind plugins');
   writeFileSync(join(temp, 'css-import.ts'), "import '@smbc/ui/styles.css';\n");
   writeFileSync(
     join(temp, 'tsconfig-css.json'),
@@ -114,9 +117,38 @@ try {
   browser = await chromium.launch();
   const page = await browser.newPage();
   page.setDefaultTimeout(10000);
+  assert(!dependencies.tailwindcss && !dependencies['@tailwindcss/vite']);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto(server.resolvedUrls.local[0]);
+  const visuals = await page.evaluate(() => {
+    const styles = (selector) => {
+      const el = document.querySelector(selector);
+      const s = getComputedStyle(el);
+      return { display: s.display, padding: s.padding, radius: s.borderRadius,
+        background: s.backgroundColor, color: s.color, borderStyle: s.borderTopStyle };
+    };
+    return { card: styles('.smbc-ui-card'), body: styles('#isolation-card-body'),
+      badge: styles('#isolation-badge'), callout: styles('#isolation-callout'),
+      group: styles('#isolation-group'), field: styles('.smbc-ui-field') };
+  });
+  assert.equal(visuals.card.radius, '6px');
+  assert.equal(visuals.card.background, 'rgb(255, 255, 255)');
+  assert.equal(visuals.card.borderStyle, 'solid');
+  // Compiled package styles must still follow runtime theme overrides.
+  for (const width of ['3px', '1px']) {
+    await page.evaluate((value) => document.documentElement.style.setProperty('--border-width-default', value), width);
+    assert.equal(await page.locator('.smbc-ui-card').first().evaluate((el) => getComputedStyle(el).borderTopWidth), width);
+  }
+  await page.evaluate(() => document.documentElement.style.removeProperty('--border-width-default'));
+
+  assert.equal(visuals.body.padding, '16px');
+  assert.equal(visuals.badge.color, 'rgb(0, 122, 82)');
+  assert.equal(visuals.badge.radius, '999px');
+  assert.equal(visuals.callout.background, 'rgba(195, 39, 43, 0.07)');
+  assert.equal(visuals.group.display, 'flex');
+  assert.equal(visuals.field.display, 'block');
+  assert.equal(await page.locator('.smbc-ui-empty-state-icon .dx-icon').evaluate((el) => getComputedStyle(el).fontSize), '20px');
   await page.getByRole('button', { name: 'Count', exact: true }).click();
   assert.equal(await page.locator('#count').textContent(), '1');
   const toolbar = page.locator('#consumer-toolbar.dx-toolbar');
@@ -192,7 +224,7 @@ try {
   );
   await page.getByRole('button', { name: 'Clear error', exact: true }).click();
   await page.waitForFunction(
-    () => !document.querySelector('.smbc-ui-field__error'),
+    () => !document.querySelector('[id$="-error"][role="alert"]'),
   );
   const remainingDescriptions = await invalid.evaluate((element) =>
     (element.getAttribute('aria-describedby') ?? '')
@@ -222,7 +254,7 @@ try {
     .getByRole('button', { name: 'Clear errors to undefined', exact: true })
     .click();
   await page.waitForFunction(
-    () => !document.querySelector('.smbc-ui-field__error'),
+    () => !document.querySelector('[id$="-error"][role="alert"]'),
   );
   for (const control of [invalid, direct, composite])
     assert.notEqual(await control.getAttribute('aria-invalid'), 'true');

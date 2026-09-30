@@ -22,10 +22,10 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Dialog {...props} onClose={onCancel}>
-      <div className="smbc-ui-dialog-body">
+      <div className="ui:flex ui:flex-col ui:gap-3 ui:py-4">
         <p>{message}</p>
-        {description && <p className="smbc-ui-muted">{description}</p>}
-        <div className="smbc-ui-dialog-actions">
+        {description && <p className="ui:text-fg-muted">{description}</p>}
+        <div className="ui:flex ui:flex-wrap ui:justify-end ui:gap-2 ui:mt-3 ui:pt-3 ui:border-t-[length:var(--border-width-default)] ui:border-border">
           <Button variant="tertiary" onClick={onCancel}>
             {cancelLabel}
           </Button>

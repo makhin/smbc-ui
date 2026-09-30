@@ -13,7 +13,7 @@ function ToolbarRoot({ devExtremeProps, ...props }: ToolbarProps) {
 }
 
 function ToolbarGroup({ className = '', ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div {...props} className={`smbc-ui-toolbar__group ${className}`.trim()} />;
+  return <div {...props} className={`ui:flex ui:flex-wrap ui:items-center ui:gap-2 ${className}`.trim()} />;
 }
 
 export const Toolbar = Object.assign(ToolbarRoot, { Item, Group: ToolbarGroup });

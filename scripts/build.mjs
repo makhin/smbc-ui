@@ -1,9 +1,13 @@
-import { rmSync, copyFileSync } from 'node:fs';
+import { rmSync, copyFileSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { dirname, resolve } from 'node:path';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const tsc = require.resolve('typescript/bin/tsc');
 rmSync('dist', { recursive: true, force: true });
 execFileSync(process.execPath, [tsc], { stdio: 'inherit' });
-copyFileSync('src/styles/styles.css', 'dist/styles.css');
+const cliManifest = require.resolve('@tailwindcss/cli/package.json');
+const cli = JSON.parse(readFileSync(cliManifest, 'utf8'));
+const tailwind = resolve(dirname(cliManifest), cli.bin.tailwindcss);
+execFileSync(process.execPath, [tailwind, '-i', 'src/styles/styles.css', '-o', 'dist/styles.css', '--minify'], { stdio: 'inherit' });
 copyFileSync('src/styles/styles.css.d.ts', 'dist/styles.css.d.ts');

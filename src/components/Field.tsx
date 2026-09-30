@@ -96,23 +96,23 @@ export function Field(props: FieldProps) {
       <div
         {...rest}
         ref={container}
-        className={`smbc-ui-field${wide ? ' smbc-ui-field--wide' : ''} ${className}`.trim()}
+        className={`smbc-ui-field ui:min-w-0${wide ? ' ui:md:col-span-2' : ''} ${className}`.trim()}
       >
         {label && (
-          <label className="smbc-ui-label" id={labelId} htmlFor={controlId}>
+          <label className="ui:block ui:mb-1 ui:text-sm ui:font-semibold ui:text-fg" id={labelId} htmlFor={controlId}>
             {label}
             {required && <span aria-hidden="true"> *</span>}
           </label>
         )}
         {children}
         {help && (
-          <span className="smbc-ui-caption" id={`${controlId}-help`}>
+          <span className="ui:text-xs ui:text-fg-muted" id={`${controlId}-help`}>
             {help}
           </span>
         )}
         {error && (
           <span
-            className="smbc-ui-field__error"
+            className="ui:text-xs ui:text-danger"
             id={`${controlId}-error`}
             role="alert"
           >

@@ -1,0 +1,23 @@
+/* Component-specific vendor integration only. Shared corporate corrections
+ * remain owned by @smbc/devextreme-theme/overrides.css. */
+.smbc-ui-field > .dx-radiogroup {
+  margin-top: calc(-1 * var(--space-1));
+}
+
+.smbc-ui-card .dx-toolbar {
+  background: transparent;
+}
+
+.smbc-ui-table-shell .dx-datagrid,
+.smbc-ui-table-shell .dx-treelist {
+  border: 0;
+}
+
+.smbc-ui-table-shell .dx-freespace-row {
+  height: 0 !important;
+}
+
+/* The vendor icon sets an unlayered font-size in non-Tailwind consumers. */
+.smbc-ui-empty-state-icon .dx-icon {
+  font-size: var(--font-size-xl);
+}
