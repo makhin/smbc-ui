@@ -62,10 +62,19 @@ Use ordinary `div` elements with application utilities for generic flex/grid
 composition. Do not introduce Stack/Row/Grid abstractions merely to hide CSS.
 StatusBadge and Callout use explicit tone maps so all variants are compiled.
 
-Responsive filters use one column below `md` (768px), two up to `xl` (1280px),
-and four at `xl`. `Field wide` spans two columns from `md`. This replaces the
-old 760/1100px thresholds with standard breakpoints and avoids cramped four
-column filters in sidebar applications.
+`FilterPanel` owns its surface and padding; applications own the field layout.
+For example, use `className="grid grid-cols-1 gap-x-4 gap-y-3 md:grid-cols-2 xl:grid-cols-4"`
+on the panel and `className="md:col-span-2"` on a Field that spans two columns.
+Consumers without Tailwind can supply ordinary application CSS through className;
+the panel's own appearance is still included in `styles.css`.
+
+### Layout API migration
+
+`Field wide` and `Toolbar.Group` have been removed during local 0.1.0 development.
+Replace `wide` with application layout classes. Replace Group with an ordinary
+`div` inside `Toolbar.Item` when grouping is needed, or render text directly.
+`FilterPanel` no longer chooses grid columns or breakpoints: move those choices
+to the consuming page. Card and TableShell retain their visual/vendor contracts.
 
 **@smbc/ui does not own the SMBC theme.** `@smbc/devextreme-theme` owns tokens,
 fonts, logo, favicon, generated DevExtreme CSS, overrides and visualization
@@ -102,8 +111,7 @@ composite root. Set `id` on Field for a stable id; otherwise it uses React
 through the advanced validation API below. `error` on Field renders and
 associates an external error and makes the editor invalid. Without Field, give
 the control `ariaLabel` (or use the deliberate input/element attribute escape
-hatch). Checkbox can use its visible `label`. `wide` spans two filter columns
-until the narrow breakpoint.
+hatch). Checkbox can use its visible `label`. Field does not choose grid placement.
 
 ## Root exports and mappings
 
@@ -124,32 +132,30 @@ until the narrow breakpoint.
 | Toast | Toast; open, message, tone, duration, onClose |
 | LoadingIndicator | LoadIndicator; size (24 default), optional ariaLabel |
 | Card | Card.Header, Card.Title, Card.Body, Card.Footer composition |
-| Field | Label/control/help/error association, required marker, wide |
+| Field | Label/control/help/error association, required marker |
 | StatusBadge | neutral/info/warning/success/danger/brand tone |
 | Callout | info/brand/warning/danger tone, optional title, children |
 | EmptyState | icon, title, description, action; optional children |
 | KpiCard | label, value, meta |
-| Toolbar | DevExtreme Toolbar; items, Toolbar.Item, disabled, width, devExtremeProps; Toolbar.Group inside item templates |
-| FilterPanel | Responsive four/two/one-column filter layout |
+| Toolbar | DevExtreme Toolbar; items, Toolbar.Item, disabled, width, devExtremeProps |
+| FilterPanel | Filter surface and padding; application-owned layout |
 | TableShell | Shared border/overflow shell for a grid or native table |
 
 Component Props types, ButtonVariant and StatusBadgeTone are exported as well.
 
 Toolbar uses DevExtreme layout and theme styling. Place content in
-`Toolbar.Item` templates; the previous direct `<Toolbar.Group>` children must
-be moved into an item's `render` callback. `Toolbar.Group` remains a flex
-container for related controls. Use separate items when controls should move
+`Toolbar.Item` templates. Use ordinary HTML inside templates to group related
+controls. Use separate items when controls should move
 individually into the overflow menu. Use our `Button` in both `render` and
 `menuItemRender`; do not create vendor buttons with `widget="dxButton"` or an
 equivalent `items` configuration. For disabled actions, disable both the item
 and Button. With the current custom templates, clicking an action leaves the
 menu open; clicking outside dismisses it. Automatic dismissal is not part of
-the wrapper API. The change from direct Group children to Item templates is a
-consumer migration, including during local 0.1.0 development.
+the wrapper API. Toolbar items own overflow behaviour; an HTML wrapper only groups their content.
 
 ```tsx
 <Toolbar>
-  <Toolbar.Item location="before" render={() => <Toolbar.Group>Actions</Toolbar.Group>} />
+  <Toolbar.Item location="before" render={() => <span>Actions</span>} />
   <Toolbar.Item
     location="after"
     locateInMenu="auto"
@@ -379,3 +385,10 @@ APIs. Explicitly document breaking changes even during 0.x. Do not turn every
 vendor widget into a facade. Candidates for the next release are a semantic
 validation-rules API, a reusable LoadingState and a shared field description
 pattern for multiple related editors, once real consumers establish the need.
+
+## Refreshing the local three-repository setup
+
+From `../smbc-style`, run `npm run refresh:packages`. It builds and checks the
+canonical theme, installs its archive here as a devDependency, builds and checks
+UI, then installs both archives in the app and runs its checks. Each repository
+keeps its own lockfile and tarball boundary; no workspace or source alias is used.

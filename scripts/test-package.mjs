@@ -117,6 +117,11 @@ try {
   browser = await chromium.launch();
   const page = await browser.newPage();
   page.setDefaultTimeout(10000);
+  const waitForDialogFocus = async (name) => {
+    const dialog = page.getByRole('dialog', { name, exact: true });
+    await dialog.waitFor();
+    await page.waitForFunction((el) => el.contains(document.activeElement), await dialog.elementHandle());
+  };
   assert(!dependencies.tailwindcss && !dependencies['@tailwindcss/vite']);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -130,7 +135,7 @@ try {
     };
     return { card: styles('.smbc-ui-card'), body: styles('#isolation-card-body'),
       badge: styles('#isolation-badge'), callout: styles('#isolation-callout'),
-      group: styles('#isolation-group'), field: styles('.smbc-ui-field') };
+      field: styles('.smbc-ui-field'), filter: styles('#isolation-filter-panel') };
   });
   assert.equal(visuals.card.radius, '6px');
   assert.equal(visuals.card.background, 'rgb(255, 255, 255)');
@@ -146,8 +151,10 @@ try {
   assert.equal(visuals.badge.color, 'rgb(0, 122, 82)');
   assert.equal(visuals.badge.radius, '999px');
   assert.equal(visuals.callout.background, 'rgba(195, 39, 43, 0.07)');
-  assert.equal(visuals.group.display, 'flex');
   assert.equal(visuals.field.display, 'block');
+  assert.equal(visuals.filter.padding, '16px');
+  assert.equal(visuals.filter.background, 'rgb(255, 255, 255)');
+  assert.equal(visuals.filter.display, 'block');
   assert.equal(await page.locator('.smbc-ui-empty-state-icon .dx-icon').evaluate((el) => getComputedStyle(el).fontSize), '20px');
   await page.getByRole('button', { name: 'Count', exact: true }).click();
   assert.equal(await page.locator('#count').textContent(), '1');
@@ -314,30 +321,19 @@ try {
   await page.getByText('Beta', { exact: true }).click();
   assert.equal(await page.locator('#accordion').textContent(), '-1');
   await page.getByRole('button', { name: 'Open', exact: true }).click();
-  await page.getByRole('dialog').waitFor();
-  await page.waitForFunction(() =>
-    [...document.querySelectorAll('[role="dialog"]')].some(
-      (element) =>
-        element.getClientRects().length &&
-        element.contains(document.activeElement),
-    ),
-  );
+  await waitForDialogFocus('Dialog title');
   await page.getByRole('button', { name: 'Close content' }).click();
   await page.getByRole('dialog').waitFor({ state: 'hidden' });
   await page.getByRole('button', { name: 'Open', exact: true }).click();
-  await page.getByRole('dialog').waitFor();
-  await page.waitForFunction(() =>
-    [...document.querySelectorAll('[role="dialog"]')].some(
-      (element) =>
-        element.getClientRects().length &&
-        element.contains(document.activeElement),
-    ),
-  );
+  await waitForDialogFocus('Dialog title');
   await page.keyboard.press('Escape');
   await page.getByRole('dialog').waitFor({ state: 'hidden' });
   await page.getByRole('button', { name: 'Confirm action' }).click();
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
-  await page.getByText('Deleted', { exact: true }).waitFor();
+  await waitForDialogFocus('Delete item?');
+  await Promise.all([
+    page.getByText('Deleted', { exact: true }).waitFor(),
+    page.getByRole('button', { name: 'Delete', exact: true }).click(),
+  ]);
   await page.waitForFunction(
     () => document.querySelector('#toast').textContent === 'false',
   );

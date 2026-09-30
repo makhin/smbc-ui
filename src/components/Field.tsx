@@ -22,7 +22,6 @@ export type FieldProps = Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
   help?: ReactNode;
   error?: string;
   required?: boolean;
-  wide?: boolean;
 };
 export function Field(props: FieldProps) {
   const {
@@ -32,7 +31,6 @@ export function Field(props: FieldProps) {
     help,
     error,
     required,
-    wide,
     className = '',
     ...rest
   } = props;
@@ -96,7 +94,7 @@ export function Field(props: FieldProps) {
       <div
         {...rest}
         ref={container}
-        className={`smbc-ui-field ui:min-w-0${wide ? ' ui:md:col-span-2' : ''} ${className}`.trim()}
+        className={`smbc-ui-field ui:min-w-0 ${className}`.trim()}
       >
         {label && (
           <label className="ui:block ui:mb-1 ui:text-sm ui:font-semibold ui:text-fg" id={labelId} htmlFor={controlId}>

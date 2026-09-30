@@ -13,7 +13,7 @@ export const Card = Object.assign(box(`smbc-ui-card ${surface} ui:shadow-card-el
   Body: box('ui:p-4'),
   Footer: box('ui:flex ui:flex-wrap ui:justify-end ui:gap-2 ui:px-4 ui:py-3 ui:border-t-[length:var(--border-width-default)] ui:border-border'),
 });
-export const FilterPanel = box(`${surface} ui:grid ui:grid-cols-1 ui:gap-x-4 ui:gap-y-3 ui:p-4 ui:md:grid-cols-2 ui:xl:grid-cols-4`);
+export const FilterPanel = box(`${surface} ui:p-4`);
 export const TableShell = box(`smbc-ui-table-shell ${surface} ui:w-full ui:min-w-0 ui:overflow-hidden`);
 export type StatusBadgeTone =
   | 'neutral'

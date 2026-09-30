@@ -238,7 +238,6 @@ function App() {
         Loading
         <LoadingIndicator />
       </div>
-      <Toolbar.Group id="isolation-group">Isolated group</Toolbar.Group>
       <StatusBadge id="isolation-badge" tone="success">Isolated badge</StatusBadge>
       <Callout id="isolation-callout" tone="danger">Isolated callout</Callout>
       <Card>
@@ -252,11 +251,11 @@ function App() {
       <EmptyState title="No results" icon="search" />
       <KpiCard label="Count" value={1} />
       <Toolbar width={320} devExtremeProps={{ elementAttr: { id: 'consumer-toolbar' } }}>
-        <Toolbar.Item location="before" render={() => <Toolbar.Group>Actions</Toolbar.Group>} />
+        <Toolbar.Item location="before" render={() => <span>Actions</span>} />
         <Toolbar.Item location="after" render={() => <Button onClick={() => setCount(count + 1)}>Toolbar count</Button>} />
         <Toolbar.Item location="after" locateInMenu="always" menuItemRender={() => <Button onClick={() => setCount(count + 1)}>Toolbar menu action</Button>} />
       </Toolbar>
-      <FilterPanel>Filters</FilterPanel>
+      <FilterPanel id="isolation-filter-panel">Filters</FilterPanel>
       <form onSubmit={(e) => e.preventDefault()}>
         <ValidationGroup>
           <Field
