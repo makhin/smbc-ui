@@ -1,11 +1,15 @@
+import { useImperativeHandle, useRef, type Ref } from 'react';
 import DxButton, {
+  type ButtonRef as DxButtonRef,
   type IButtonOptions as DxProps,
 } from 'devextreme-react/button';
+export type ButtonRef = { focus: () => void };
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'danger';
 type Label =
   | { children: string; ariaLabel?: string }
   | { children?: never; ariaLabel: string };
 export type ButtonProps = Label & {
+  ref?: Ref<ButtonRef>;
   variant?: ButtonVariant;
   icon?: string;
   disabled?: boolean;
@@ -25,6 +29,7 @@ export type ButtonProps = Label & {
   >;
 };
 export function Button({
+  ref,
   children,
   ariaLabel,
   variant,
@@ -35,10 +40,13 @@ export function Button({
   width,
   devExtremeProps,
 }: ButtonProps) {
+  const controlRef = useRef<DxButtonRef>(null);
+  useImperativeHandle(ref, () => ({ focus: () => controlRef.current?.instance().focus() }), []);
   if (!children && !ariaLabel?.trim())
     throw new Error('An icon-only Button requires ariaLabel.');
   return (
     <DxButton
+      ref={controlRef}
       {...devExtremeProps}
       text={children}
       icon={icon}

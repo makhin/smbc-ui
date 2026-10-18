@@ -328,6 +328,18 @@ try {
   await waitForDialogFocus('Dialog title');
   await page.keyboard.press('Escape');
   await page.getByRole('dialog').waitFor({ state: 'hidden' });
+  // Click as soon as the action is available, including during opening.
+  // Do not wait for focus/onShown: that would hide moving-target regressions.
+  for (const reducedMotion of ['reduce', 'no-preference']) {
+    await page.emulateMedia({ reducedMotion });
+    for (let attempt = 0; attempt < 8; attempt++) {
+      await page.getByRole('button', { name: 'Confirm action' }).click();
+      const confirmation = page.getByRole('dialog', { name: 'Delete item?', exact: true });
+      await confirmation.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await confirmation.waitFor({ state: 'hidden' });
+      assert.equal(await page.locator('#toast').textContent(), 'false');
+    }
+  }
   await page.getByRole('button', { name: 'Confirm action' }).click();
   await waitForDialogFocus('Delete item?');
   await Promise.all([
@@ -380,6 +392,21 @@ try {
   await page
     .getByRole('option', { name: 'Two', exact: true })
     .waitFor({ state: 'hidden' });
+  await page.getByRole('button', { name: 'Show extensions', exact: true }).click();
+  await page.locator('#remote-grid .dx-data-row').getByText('A', { exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Focus trigger', exact: true }).click();
+  assert.equal(await page.getByRole('button', { name: 'Open panel', exact: true }).evaluate((el) => el === document.activeElement), true);
+  await page.getByRole('button', { name: 'Open panel', exact: true }).click();
+  await page.getByRole('button', { name: 'Close panel', exact: true }).click();
+  await page.getByRole('button', { name: 'Filter remote', exact: true }).click();
+  await page.locator('#remote-grid .dx-data-row').getByText('B', { exact: true }).waitFor();
+  assert.deepEqual(JSON.parse(await page.locator('#remote-load').textContent()).filter, ['name', '=', 'B']);
+  await page.getByRole('button', { name: 'Refresh remote', exact: true }).click();
+  await page.locator('#extensions .dx-step').last().click();
+  assert.equal(await page.locator('#extensions .dx-step-selected').count(), 1);
+  assert.equal(await page.locator('#extensions .dx-step').first().evaluate((el) => el.classList.contains('dx-step-selected')), true);
+  await page.getByRole('button', { name: 'Advance progress', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('#extensions .dx-step:last-child').classList.contains('dx-step-selected'));
   assert.deepEqual(errors, []);
   console.log(
     'PASS: packed consumer types, production build, controls, accessibility, validation, overlays, tabs, accordion, grid selection/filter/header filter/paging/custom cells.',

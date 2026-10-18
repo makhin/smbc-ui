@@ -18,10 +18,19 @@ export function ConfirmDialog({
   confirmVariant = 'primary',
   onConfirm,
   onCancel,
+  devExtremeProps,
   ...props
 }: ConfirmDialogProps) {
   return (
-    <Dialog {...props} onClose={onCancel}>
+    <Dialog {...props} onClose={onCancel} devExtremeProps={{
+      // Keep action targets stationary even when clicked during opening.
+      // Popup's default scale animation can move a button between down/up.
+      animation: {
+        show: { type: 'fade', duration: 150, from: 0, to: 1 },
+        hide: { type: 'fade', duration: 150, from: 1, to: 0 },
+      },
+      ...devExtremeProps,
+    }}>
       <div className="ui:flex ui:flex-col ui:gap-3 ui:py-4">
         <p>{message}</p>
         {description && <p className="ui:text-fg-muted">{description}</p>}

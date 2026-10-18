@@ -258,6 +258,9 @@ unchanged.
 ```
 
 The caller owns open state and closes a confirmation after successful action.
+ConfirmDialog uses a fade rather than a scale animation, keeping its action
+buttons stationary when clicked during opening. Override animation explicitly
+through `devExtremeProps` when needed.
 Dialog defaults: width 600, auto height, viewport max width, close button,
 no dragging, no outside-click dismissal. Escape, focus trapping and keyboard
 handling remain with DevExtreme. Toast defaults to 2500 ms and calls onClose
@@ -392,3 +395,21 @@ From `../smbc-style`, run `npm run refresh:packages`. It builds and checks the
 canonical theme, installs its archive here as a devDependency, builds and checks
 UI, then installs both archives in the app and runs its checks. Each repository
 keeps its own lockfile and tarball boundary; no workspace or source alias is used.
+
+### Drawers, progress and imperative refs
+
+`Drawer` accepts controlled `open`, `onOpenChange`, a `panel` render function,
+and children. Use `devExtremeProps` for positioning, overlap/shrink, shading,
+geometry and reduced-motion animation settings. The application owns modal
+focus containment, Escape, focus return and its routing behaviour.
+
+`Stepper` accepts `items`, `selectedIndex`, and `readOnly`. Read-only progress
+rejects user selection and disables interactive focus/hover states; applications
+own business-stage calculations and accessible status text.
+
+`Button` accepts `ref` typed as `ButtonRef`, exposing `focus()`.
+`DataGrid` accepts a generic ref typed as `DataGridRef<T, K>` from
+`@smbc/ui/data-grid`, retaining `instance()` for refresh, paging and filters.
+The same subpath exports `DataGridLookup`, `CustomStore`, `LoadOptions` and
+`LoadResultObject`. Server data policy stays with the consumer; importing these
+exports does not introduce caching or alter the vendor load contract.

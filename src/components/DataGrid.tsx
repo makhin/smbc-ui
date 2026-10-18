@@ -1,5 +1,7 @@
+import type { Ref } from 'react';
 import DxDataGrid, {
   type IDataGridOptions as DxProps,
+  type DataGridRef,
 } from 'devextreme-react/data-grid';
 export type DataGridProps<T = unknown, K = unknown> = Pick<
   DxProps<T, K>,
@@ -10,6 +12,7 @@ export type DataGridProps<T = unknown, K = unknown> = Pick<
   | 'selectedRowKeys'
   | 'defaultSelectedRowKeys'
 > & {
+  ref?: Ref<DataGridRef<T, K>>;
   onSelectionChange?: (keys: K[]) => void;
   devExtremeProps?: Omit<
     DxProps<T, K>,

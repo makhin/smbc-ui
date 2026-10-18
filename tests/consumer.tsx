@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  Button,
+  Button, Drawer, Stepper, type ButtonRef,
   Field,
   TextInput,
   TextArea,
@@ -27,6 +27,7 @@ import {
   FilterPanel,
 } from '@smbc/ui';
 import {
+  CustomStore, type DataGridRef,
   DataGridColumn,
   DataGridFilterRow,
   DataGridHeaderFilter,
@@ -56,6 +57,7 @@ const gridRows = [
   { id: 3, name: 'C' },
 ];
 function App() {
+  const [extensions, setExtensions] = useState(false);
   const [externalError, setExternalError] = useState<string | undefined>(
     'Server error',
   );
@@ -300,7 +302,43 @@ function App() {
         <DataGridPager visible />
       </DataGrid>
       <output id="keys">{keys.join(',')}</output>
+      <Button onClick={() => setExtensions(true)}>Show extensions</Button>
+      {extensions && <Extensions /> }
     </>
   );
 }
 createRoot(document.getElementById('root')!).render(<App />);
+
+function Extensions() {
+  const button = useRef<ButtonRef>(null);
+  const grid = useRef<DataGridRef<{ id: number; name: string }, number>>(null);
+  const [open, setOpen] = useState(false);
+  const [step, setStep] = useState(0);
+  const [load, setLoad] = useState('');
+  const store = useMemo(() => new CustomStore<{ id: number; name: string }, number>({
+    key: 'id', loadMode: 'processed',
+    load: async (options) => {
+      setLoad(JSON.stringify(options));
+      const rows = options.filter ? gridRows.filter((row) => row.name === 'B') : gridRows;
+      return { data: rows.slice(options.skip ?? 0, (options.skip ?? 0) + (options.take ?? 1)), totalCount: rows.length };
+    },
+  }), []);
+  return <section id="extensions">
+    <Button ref={button} onClick={() => setOpen(true)}>Open panel</Button>
+    <Button onClick={() => button.current?.focus()}>Focus trigger</Button>
+    <Drawer open={open} onOpenChange={setOpen} panel={() => <Button onClick={() => setOpen(false)}>Close panel</Button>}
+      devExtremeProps={{ openedStateMode: 'overlap', shading: true, closeOnOutsideClick: true, maxSize: 200 }}>
+      <p>Drawer content</p>
+    </Drawer>
+    <Stepper items={[{ label: 'First' }, { label: 'Second' }]} selectedIndex={step} readOnly />
+    <Button onClick={() => setStep(1)}>Advance progress</Button>
+    <DataGrid ref={grid} dataSource={store} devExtremeProps={{ remoteOperations: true, elementAttr: { id: 'remote-grid' } }}>
+      <DataGridColumn dataField="name" />
+      <DataGridPaging defaultPageSize={1} />
+      <DataGridPager visible />
+    </DataGrid>
+    <Button onClick={() => { grid.current?.instance().pageIndex(0); grid.current?.instance().filter(['name', '=', 'B']); }}>Filter remote</Button>
+    <Button onClick={() => void grid.current?.instance().refresh()}>Refresh remote</Button>
+    <output id="remote-load">{load}</output>
+  </section>;
+}
