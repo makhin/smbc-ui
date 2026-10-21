@@ -403,11 +403,17 @@ try {
   await page.locator('#remote-grid .dx-data-row').getByText('B', { exact: true }).waitFor();
   assert.deepEqual(JSON.parse(await page.locator('#remote-load').textContent()).filter, ['name', '=', 'B']);
   await page.getByRole('button', { name: 'Refresh remote', exact: true }).click();
+  const progress = page.getByRole('progressbar', { name: 'Consumer progress' });
+  assert.equal(await progress.getAttribute('aria-valuenow'), '0');
+  assert.equal(await progress.getAttribute('aria-valuemin'), '0');
+  assert.equal(await progress.getAttribute('aria-valuemax'), '100');
+  assert.equal(await progress.getAttribute('data-consumer'), 'preserved');
   await page.locator('#extensions .dx-step').last().click();
   assert.equal(await page.locator('#extensions .dx-step-selected').count(), 1);
   assert.equal(await page.locator('#extensions .dx-step').first().evaluate((el) => el.classList.contains('dx-step-selected')), true);
   await page.getByRole('button', { name: 'Advance progress', exact: true }).click();
   await page.waitForFunction(() => document.querySelector('#extensions .dx-step:last-child').classList.contains('dx-step-selected'));
+  await page.waitForFunction(() => document.querySelector('#consumer-progress').getAttribute('aria-valuenow') === '100');
   assert.deepEqual(errors, []);
   console.log(
     'PASS: packed consumer types, production build, controls, accessibility, validation, overlays, tabs, accordion, grid selection/filter/header filter/paging/custom cells.',

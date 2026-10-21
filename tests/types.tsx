@@ -12,6 +12,7 @@ import {
   Dialog,
   ConfirmDialog,
   LoadingIndicator,
+  ProgressBar,
   Tabs,
   DataGrid,
   type TextInputProps,
@@ -227,3 +228,13 @@ const options: readonly { id: number; name: string }[] = [
 // @ts-expect-error Internal helper types have no root export.
 import type { EditorProps } from '@smbc/ui';
 export type { Contracts };
+
+const progressExamples = <>
+  <ProgressBar value={25} ariaLabel="Import progress" />
+  <ProgressBar value={5} min={0} max={10} showStatus={false} ariaLabel="Import progress" />
+  {/* @ts-expect-error A named progressbar is required. */}
+  <ProgressBar value={25} />
+  {/* @ts-expect-error Controlled values must use the public prop. */}
+  <ProgressBar value={25} ariaLabel="Import progress" devExtremeProps={{ value: 50 }} />
+</>;
+void progressExamples;

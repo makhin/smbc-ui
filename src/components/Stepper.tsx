@@ -11,5 +11,11 @@ export function Stepper({ items, selectedIndex, readOnly = false, devExtremeProp
     activeStateEnabled={readOnly ? false : devExtremeProps?.activeStateEnabled}
     focusStateEnabled={readOnly ? false : devExtremeProps?.focusStateEnabled}
     hoverStateEnabled={readOnly ? false : devExtremeProps?.hoverStateEnabled}
-    onSelectionChanging={(event) => { if (readOnly && event.addedItems[0] !== items?.[selectedIndex]) event.cancel = true; }} />;
+    onSelectionChanging={(event) => {
+      // DevExtreme applies selectedIndex before replacing React event handlers.
+      // Read the widget's target index so controlled updates are allowed while
+      // user selection of a different item remains blocked in read-only mode.
+      const index = event.component.option('selectedIndex') ?? -1;
+      if (readOnly && event.addedItems[0] !== event.component.option('items')?.[index]) event.cancel = true;
+    }} />;
 }

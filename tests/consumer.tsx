@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  Button, Drawer, Stepper, type ButtonRef,
+  Button, Drawer, Stepper, ProgressBar, type ButtonRef,
   Field,
   TextInput,
   TextArea,
@@ -309,6 +309,7 @@ function App() {
 }
 createRoot(document.getElementById('root')!).render(<App />);
 
+const extensionSteps = [{ label: 'First' }, { label: 'Second' }];
 function Extensions() {
   const button = useRef<ButtonRef>(null);
   const grid = useRef<DataGridRef<{ id: number; name: string }, number>>(null);
@@ -330,7 +331,8 @@ function Extensions() {
       devExtremeProps={{ openedStateMode: 'overlap', shading: true, closeOnOutsideClick: true, maxSize: 200 }}>
       <p>Drawer content</p>
     </Drawer>
-    <Stepper items={[{ label: 'First' }, { label: 'Second' }]} selectedIndex={step} readOnly />
+    <ProgressBar value={step * 100} ariaLabel="Consumer progress" devExtremeProps={{ elementAttr: { id: 'consumer-progress', 'data-consumer': 'preserved' } }} />
+    <Stepper items={extensionSteps} selectedIndex={step} readOnly />
     <Button onClick={() => setStep(1)}>Advance progress</Button>
     <DataGrid ref={grid} dataSource={store} devExtremeProps={{ remoteOperations: true, elementAttr: { id: 'remote-grid' } }}>
       <DataGridColumn dataField="name" />

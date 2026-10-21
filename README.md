@@ -428,3 +428,18 @@ adapter, UI and app. The base archive is `../smbc-theme/smbc-theme-0.1.0.tgz`;
 install it alongside the adapter archive (with `--save-dev` in UI).
 `Build-Updated` mode `Theme` rebuilds both themes and consumers; mode `Ui` uses
 installed themes. `Build-Clean` and `refresh:packages` cover the complete chain.
+
+### ProgressBar
+
+`ProgressBar` wraps the DevExtreme percentage indicator. Provide a numeric `value`
+and an accessible `ariaLabel`. `min` and `max` default to 0 and 100;
+`showStatus` defaults to true. Advanced options go through `devExtremeProps`.
+The wrapper preserves custom element attributes while applying the accessible name.
+
+```tsx
+import { ProgressBar } from '@smbc/ui';
+
+<ProgressBar value={50} ariaLabel="Batch processing progress" />
+```
+
+Use `Stepper` for workflow stages and `ProgressBar` for measured completion.

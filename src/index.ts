@@ -20,3 +20,4 @@ export * from './components/Primitives.js';
 
 export * from './components/Drawer.js';
 export * from './components/Stepper.js';
+export * from './components/ProgressBar.js';
