@@ -1,6 +1,6 @@
 # @smbc/ui
 
-Reusable SMBC React components, version **0.1.0**. The `smbc-style` project is
+Reusable SMBC React components, version **0.2.0**. The `smbc-style` project is
 the integration reference. Reflect public behaviour and visual changes there
 in the same change/release cycle.
 
@@ -9,11 +9,11 @@ in the same change/release cycle.
 Use your approved internal registry (for example Nexus):
 
 ```sh
-npm install @smbc/ui@0.1.0 @smbc/devextreme-theme@0.1.0 devextreme@26.1.4 devextreme-react@26.1.4 react@19.2.8 react-dom@19.2.8
+npm install @smbc/ui@0.2.0 @smbc/theme@0.1.0 @smbc/devextreme-theme@0.2.0 devextreme@26.1.4 devextreme-react@26.1.4 react@19.2.8 react-dom@19.2.8
 ```
 
 Peer contracts: React/React DOM `^19.2.8`, DevExtreme/DevExtreme React `~26.1.4`,
-SMBC theme `^0.1.0`. None of these runtimes is bundled. This is a browser React
+SMBC base theme `0.1.0` and DevExtreme adapter `^0.2.0`. None of these runtimes is bundled. This is a browser React
 library intended for an ESM bundler such as Vite; Node SSR is not a supported
 v0.1 target. Use Vite's `vite/client` types for CSS imports in TypeScript.
 
@@ -76,9 +76,10 @@ Replace `wide` with application layout classes. Replace Group with an ordinary
 `FilterPanel` no longer chooses grid columns or breakpoints: move those choices
 to the consuming page. Card and TableShell retain their visual/vendor contracts.
 
-**@smbc/ui does not own the SMBC theme.** `@smbc/devextreme-theme` owns tokens,
-fonts, logo, favicon, generated DevExtreme CSS, overrides and visualization
-palette. Applications still import assets/palette directly from that package.
+**@smbc/ui does not own the SMBC theme.** `@smbc/theme` owns tokens,
+fonts, logo and favicon. `@smbc/devextreme-theme` owns generated vendor CSS,
+overrides and the visualization palette. Applications import assets from the
+base theme and the palette from the adapter.
 Routing, business workflows, navigation, global typography and application
 shells belong to applications. No chart abstraction is included in v0.1, and
 `smbc-style` has no chart section. Application controls must use this package;
@@ -331,12 +332,12 @@ same control.
 
 ## Development and packed integration
 
-The local theme dependency uses `../devextreme-theme/smbc-devextreme-theme-0.1.0.tgz`.
+The local theme dependency uses `../smbc-devextreme-theme/smbc-devextreme-theme-0.2.0.tgz`.
 After regenerating the theme, refresh the development archive and its integrity
 (use `--save-dev` to retain the registry peer range), then:
 
 ```sh
-npm install --save-dev ../devextreme-theme/smbc-devextreme-theme-0.1.0.tgz
+npm install --save-dev ../smbc-theme/smbc-theme-0.1.0.tgz ../smbc-devextreme-theme/smbc-devextreme-theme-0.2.0.tgz
 npm ci
 # First browser setup only, when Chromium is not already installed:
 npx playwright install chromium
@@ -344,7 +345,7 @@ npm run check
 # Only immediately after a successful check, with no intervening source changes:
 npm pack --ignore-scripts
 cd ../smbc-style
-npm install ../smbc-ui/smbc-ui-0.1.0.tgz
+npm install ../smbc-ui/smbc-ui-0.2.0.tgz
 npm run lint
 npm run typecheck
 npm run build
@@ -389,11 +390,11 @@ vendor widget into a facade. Candidates for the next release are a semantic
 validation-rules API, a reusable LoadingState and a shared field description
 pattern for multiple related editors, once real consumers establish the need.
 
-## Refreshing the local three-repository setup
+## Refreshing the local four-repository setup
 
 From `../smbc-style`, run `npm run refresh:packages`. It builds and checks the
-canonical theme, installs its archive here as a devDependency, builds and checks
-UI, then installs both archives in the app and runs its checks. Each repository
+base theme, then the adapter, installs both archives here as devDependencies,
+builds and checks UI, then installs all three archives in the app and runs its checks. Each repository
 keeps its own lockfile and tarball boundary; no workspace or source alias is used.
 
 ### Drawers, progress and imperative refs
@@ -413,3 +414,17 @@ own business-stage calculations and accessible status text.
 The same subpath exports `DataGridLookup`, `CustomStore`, `LoadOptions` and
 `LoadResultObject`. Server data policy stays with the consumer; importing these
 exports does not introduce caching or alter the vendor load contract.
+
+## Split theme packages (0.2.0 migration)
+
+`@smbc/theme@0.1.0` owns tokens, corporate fonts, brand assets and the Tailwind
+bridge. `@smbc/devextreme-theme@0.2.0` owns vendor CSS, overrides, icon fonts and
+chart palette registration. Import shared resources from `@smbc/theme`; old
+adapter resource exports and its root entry are removed.
+
+All four sibling projects are required for local development: `smbc-theme`,
+`smbc-devextreme-theme`, `smbc-ui`, `smbc-style`. Build/pack the base first, then
+adapter, UI and app. The base archive is `../smbc-theme/smbc-theme-0.1.0.tgz`;
+install it alongside the adapter archive (with `--save-dev` in UI).
+`Build-Updated` mode `Theme` rebuilds both themes and consumers; mode `Ui` uses
+installed themes. `Build-Clean` and `refresh:packages` cover the complete chain.

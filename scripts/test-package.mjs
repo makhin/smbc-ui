@@ -49,6 +49,7 @@ try {
       ).version,
     ]),
   );
+  dependencies['@smbc/theme'] = `file:${resolve(root, dev['@smbc/theme'].slice(5))}`;
   dependencies['@smbc/ui'] = `file:${join(temp, pack.filename)}`;
   dependencies['@smbc/devextreme-theme'] =
     `file:${resolve(root, dev['@smbc/devextreme-theme'].slice(5))}`;
